@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex LiveView Browser Testing"
+  short_description: "Shared browser UI diagnostics"
+  default_prompt: "Use $codex-liveview-browser-testing to inspect the same visible browser page as the human and report URL, assets, console, layout, and a settled visual frame before changing code."

@@ -1,0 +1,99 @@
+---
+name: codex-liveview-browser-testing
+description: Use when Codex tests, debugs, verifies, or changes a web UI in a visible browser, especially for local pages, styling problems, responsive behavior, overflow, failed assets, or screenshots.
+---
+
+# Codex LiveView Browser Testing
+
+Use this skill for browser-based UI testing and debugging where a human and Codex should inspect the same visible page.
+
+## Operating rules
+
+- Preserve the human’s browser control. Do not silently navigate, submit forms, change data, or close the user’s tab.
+- Keep the workflow local-first. Do not create public URLs, remote streams, credential capture, or cloud dependencies without explicit approval.
+- Use selected screenshots after meaningful state changes; never stream continuous screenshots into model context.
+- If the page is a local project, inspect project instructions and project status/memory docs before substantial changes.
+
+## Diagnostic workflow
+
+Follow this order and report evidence, not assumptions:
+
+1. Confirm the final URL, navigation result, page title, and document readiness.
+2. Check failed network requests, especially CSS, JavaScript, fonts, images, source maps, and data requests.
+3. Check console errors and warnings.
+4. Confirm stylesheets and scripts are present and applied; do not treat an HTML 200 alone as page health.
+5. Measure viewport width/height, document width/height, scroll dimensions, and visible element rectangles.
+6. Detect horizontal overflow and identify likely candidates by selector, width, and position.
+7. Capture one settled frame after the page finishes loading or after a meaningful user action.
+8. Summarize the result in plain language before proposing code changes.
+
+Before capturing the settled frame, record the browser CSS viewport (`innerWidth`, `innerHeight`) and document dimensions. After capture, record the actual raster dimensions (`raster.width`, `raster.height`) separately; device scale factors can make raster pixels differ from CSS pixels. Never reuse an older screenshot path when a newer meaningful browser state has been captured.
+
+Only publish a screenshot after a visual and structural integrity check confirms that it is one coherent viewport or full-page capture. Include `integrity: 'verified'` only after that check. If the frame is duplicated, tiled, stale, or cannot be inspected, omit the screenshot or keep the last verified reference; do not overwrite good evidence with it.
+
+## Shared-page handoff
+
+- Prefer the user’s existing authenticated visible browser tab when it is available.
+- Claim only a tab returned by the browser tool’s current tab-list operation; never guess a tab ID.
+- Keep a user-facing page open when the user needs to inspect it directly.
+- Before finishing browser work, release or hand off the tab according to the browser tool’s finalization rules.
+
+## Local startup
+
+- Use the project’s documented startup command and wait for the server to be ready before diagnosing the browser.
+- Before the first handoff or after a resume, run `scripts/ensure-liveview.ps1`. It reuses a responding LiveView instance; otherwise it starts only the documented LiveView `npm.cmd start` command and waits for `/api/evidence/health`.
+- Set `CODEX_LIVEVIEW_ROOT` when the LiveView project is installed somewhere other than the local default. The helper never starts the application under test.
+- Start the application under test only with its own documented project command. If the page appears raw or incomplete, first verify that expected startup path; do not immediately blame a stylesheet or rewrite application code.
+
+## Reporting format
+
+Return a compact evidence summary with:
+
+- page URL/title/readiness;
+- asset and data-request status;
+- console status;
+- viewport/document dimensions;
+- overflow candidates;
+- screenshot path or inline frame when available;
+- whether the evidence is sufficient to edit code.
+
+## Startup and resume health
+
+When LiveView is available, check `GET http://127.0.0.1:4173/api/evidence/health` during startup and after a resumed task before publishing a new handoff.
+
+- `healthy` means the persisted evidence state is readable and contains saved records.
+- `empty` is a valid first-run state; continue the browser diagnosis without treating it as a page failure.
+- `unavailable` is a LiveView diagnostic warning; continue the browser diagnosis, preserve the last verified frame, and report that persistence health could not be confirmed.
+- When retention needs checking, request the read-only `/api/artifacts/cleanup-dry-run` report. Never delete from the skill without the existing explicit approval flow.
+- Publish the verified handoff only after the health result is known, or clearly report the dashboard-unavailable fallback.
+
+## Local LiveView handoff
+
+When Codex LiveView is running at `http://127.0.0.1:4173`, publish one compact evidence snapshot after a meaningful browser state change. Use one stable `sessionId` for the browser-debugging run, the real project name for `projectName` when available, and an optional `chatSessionId` or Codex task ID when the evidence belongs to a conversation. If there is no project or chat session, omit the optional field; LiveView keeps the evidence under an unassigned fallback.
+
+```js
+const handoff = await fetch('http://127.0.0.1:4173/api/evidence', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({
+    projectName,
+    sessionId,
+    chatSessionId,
+    url,
+    title,
+    readyState,
+    viewport: { width: innerWidth, height: innerHeight },
+    document: { width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight },
+    layout: { status, overflowPixels, candidates },
+    assets,
+    console: { errors, warnings },
+    screenshot: { path: screenshotPath, raster: { width: raster.width, height: raster.height }, integrity: 'verified' }
+  })
+});
+
+if (!handoff.ok) {
+  throw new Error(`LiveView handoff failed: ${handoff.status}`);
+}
+```
+
+Send compact measurements and selected frame references only. The local dashboard persists the latest metadata and bounded session history across normal restarts, and accepted handoffs are indexed in the local JSONL evidence manifest. If the dashboard is unavailable, continue the browser diagnosis and report the evidence in the task; do not treat dashboard delivery failure as a page failure.
