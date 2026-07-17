@@ -55,3 +55,7 @@ The required file is `SKILL.md`. The `agents/openai.yaml` file provides display 
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+## Origin
+
+Idea, planning, and implementation by Luna 5.6 with Ibrahim Atief.
