@@ -34,6 +34,16 @@ When LiveView is available at `http://127.0.0.1:4173`, the skill publishes one c
 
 If LiveView is unavailable after the readiness check, Codex continues the browser diagnosis and reports the handoff limitation instead of treating it as a page failure.
 
+## Token-efficient reporting
+
+The skill is designed to improve testing quality without increasing conversation overhead:
+
+- One compact preflight and one handoff per meaningful state.
+- Only new or changed facts after an action.
+- Counts for healthy assets and console checks; details for failures or restrictions.
+- No duplicate screenshots.
+- Full structured evidence stays in the local manifest; the conversation receives the short result.
+
 ## Installation
 
 Install or copy this skill folder into the Codex skills directory:

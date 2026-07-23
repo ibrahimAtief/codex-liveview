@@ -57,6 +57,17 @@ Return a compact evidence summary with:
 - screenshot path or inline frame when available;
 - whether the evidence is sufficient to edit code.
 
+## Token-efficient reporting
+
+Keep the conversation compact by default:
+
+- Send one preflight summary and one handoff per meaningful browser state.
+- After an action, report only new or changed facts; do not repeat unchanged project, session, URL, asset, or console details.
+- Represent healthy assets and console checks as counts. List individual entries only for failures, environment restrictions, or requested detail.
+- Capture a screenshot only after a meaningful state change or failure; never send duplicate frames.
+- Keep full structured evidence in the local manifest and send a short result summary to the conversation.
+- If LiveView is unavailable, report that once and continue the browser test without retry loops.
+
 ## Startup and resume health
 
 When LiveView is available, check `GET http://127.0.0.1:4173/api/evidence/health` during startup and after a resumed task before publishing a new handoff.
