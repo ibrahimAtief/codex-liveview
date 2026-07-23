@@ -45,6 +45,10 @@ Only publish a screenshot after a visual and structural integrity check confirms
 - Set `CODEX_LIVEVIEW_ROOT` when the LiveView project is installed somewhere other than the local default. The helper never starts the application under test.
 - Start the application under test only with its own documented project command. If the page appears raw or incomplete, first verify that expected startup path; do not immediately blame a stylesheet or rewrite application code.
 
+## Automatic evidence publishing
+
+After Codex has prepared and integrity-checked one snapshot JSON file, run `scripts/publish-evidence.ps1 -SnapshotPath <path>`. The helper reuses the readiness check, sends one `POST /api/evidence`, and reports `published=true` or `published=false`. It never starts the application under test and does not retry failed publishes.
+
 ## Reporting format
 
 Return a compact evidence summary with:

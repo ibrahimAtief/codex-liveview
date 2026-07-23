@@ -28,6 +28,8 @@ Set `CODEX_LIVEVIEW_ROOT` when LiveView is installed outside its local default p
 
 The helper starts only LiveView. It does not start, navigate, submit, or modify the application being tested.
 
+The bundled `scripts/publish-evidence.ps1` helper automates the handoff after Codex has prepared and integrity-checked one snapshot JSON file. It reuses the readiness helper, posts once to `/api/evidence`, and reports `published=true` or `published=false`. It never starts the application under test and never retries a failed publish loop.
+
 ## Local handoff
 
 When LiveView is available at `http://127.0.0.1:4173`, the skill publishes one compact `POST /api/evidence` handoff after a meaningful browser state change. The handoff can include project/session identity, DOM measurements, asset status, console findings, and a verified screenshot reference.
@@ -56,7 +58,7 @@ Install or copy this skill folder into the Codex skills directory:
 $CODEX_HOME/skills/codex-liveview-browser-testing
 ```
 
-The required file is `SKILL.md`. The `agents/openai.yaml` file provides display metadata, and `scripts/ensure-liveview.ps1` provides deterministic local readiness checks.
+The required file is `SKILL.md`. The `agents/openai.yaml` file provides display metadata, while `scripts/ensure-liveview.ps1` and `scripts/publish-evidence.ps1` provide deterministic local readiness and handoff checks.
 
 ## Safety boundaries
 
