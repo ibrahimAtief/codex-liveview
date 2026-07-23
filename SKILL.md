@@ -27,6 +27,16 @@ Follow this order and report evidence, not assumptions:
 7. Capture one settled frame after the page finishes loading or after a meaningful user action.
 8. Summarize the result in plain language before proposing code changes.
 
+### Diagnostic phases
+
+Label each published snapshot with one phase:
+
+- `initial-load`: the first stable observation before Codex or the user performs the test action.
+- `action`: the immediate observation after a meaningful click, navigation, search, filter, or form interaction; report only changed facts.
+- `settled-result`: the final observation after the page and dependent data finish settling; this is the phase used for a final screenshot and edit decision.
+
+Do not call an `initial-load` or `action` snapshot the final result. The action phase is intentionally compact; keep the phase in the handoff and manifest so resumed work can identify which screen is authoritative.
+
 Before capturing the settled frame, record the browser CSS viewport (`innerWidth`, `innerHeight`) and document dimensions. After capture, record the actual raster dimensions (`raster.width`, `raster.height`) separately; device scale factors can make raster pixels differ from CSS pixels. Never reuse an older screenshot path when a newer meaningful browser state has been captured.
 
 Only publish a screenshot after a visual and structural integrity check confirms that it is one coherent viewport or full-page capture. Include `integrity: 'verified'` only after that check. If the frame is duplicated, tiled, stale, or cannot be inspected, omit the screenshot or keep the last verified reference; do not overwrite good evidence with it.
@@ -105,6 +115,7 @@ const handoff = await fetch('http://127.0.0.1:4173/api/evidence', {
     projectName,
     sessionId,
     chatSessionId,
+    phase,
     url,
     title,
     readyState,

@@ -46,6 +46,8 @@ The skill is designed to improve testing quality without increasing conversation
 - No duplicate screenshots.
 - Full structured evidence stays in the local manifest; the conversation receives the short result.
 
+Snapshots carry an explicit phase: `initial-load`, `action`, or `settled-result`. Initial-load establishes the baseline, action reports only changed facts, and settled-result is the authoritative final state for a screenshot or edit decision.
+
 ## Evidence-source classification
 
 Requests are classified as `loaded`, `failed`, `environment-blocked`, or `not-tested`. Browser observations remain separate from independent HTTP probes, so a testing-environment restriction is not mistaken for an application failure.
