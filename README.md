@@ -44,6 +44,10 @@ The skill is designed to improve testing quality without increasing conversation
 - No duplicate screenshots.
 - Full structured evidence stays in the local manifest; the conversation receives the short result.
 
+## Evidence-source classification
+
+Requests are classified as `loaded`, `failed`, `environment-blocked`, or `not-tested`. Browser observations remain separate from independent HTTP probes, so a testing-environment restriction is not mistaken for an application failure.
+
 ## Installation
 
 Install or copy this skill folder into the Codex skills directory:

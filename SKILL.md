@@ -68,6 +68,17 @@ Keep the conversation compact by default:
 - Keep full structured evidence in the local manifest and send a short result summary to the conversation.
 - If LiveView is unavailable, report that once and continue the browser test without retry loops.
 
+## Evidence-source classification
+
+Classify each request using the strongest available evidence instead of guessing:
+
+- `loaded`: the browser observed a successful resource response.
+- `failed`: the browser or an independent probe observed an application failure such as HTTP 4xx/5xx.
+- `environment-blocked`: the browser was prevented by the current environment, while an independent HTTP probe may still confirm the resource is healthy.
+- `not-tested`: no browser observation or independent probe exists.
+
+Keep browser observations and independent HTTP probes as separate fields. A blocked browser request is not an application failure when an independent probe succeeds. Report both facts compactly, for example: `browser environment-blocked · independent HTTP 200`. Do not list individual healthy resources unless requested.
+
 ## Startup and resume health
 
 When LiveView is available, check `GET http://127.0.0.1:4173/api/evidence/health` during startup and after a resumed task before publishing a new handoff.
