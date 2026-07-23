@@ -30,6 +30,8 @@ The helper starts only LiveView. It does not start, navigate, submit, or modify 
 
 The bundled `scripts/preflight-browser.ps1` helper performs a read-only capability check before testing. It reports Chrome/Edge, Node, Playwright, screenshot-root, independent HTTP, LiveView health, and shared-browser-tab status without installing or starting anything.
 
+After a settled handoff, `scripts/format-report.ps1` creates a compact three-line report separating direct observations, independent verification, and clearly labeled inference. It can print to the conversation or save a local report with `-OutputPath`.
+
 The bundled `scripts/publish-evidence.ps1` helper automates the handoff after Codex has prepared and integrity-checked one snapshot JSON file. It reuses the readiness helper, posts once to `/api/evidence`, and reports `published=true` or `published=false`. It never starts the application under test and never retries a failed publish loop.
 
 ## Local handoff

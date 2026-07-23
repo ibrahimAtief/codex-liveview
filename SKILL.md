@@ -63,6 +63,10 @@ Before testing, run `scripts/preflight-browser.ps1` once. It reports the availab
 
 After Codex has prepared and integrity-checked one snapshot JSON file, run `scripts/publish-evidence.ps1 -SnapshotPath <path>`. The helper reuses the readiness check, sends one `POST /api/evidence`, and reports `published=true` or `published=false`. It never starts the application under test and does not retry failed publishes.
 
+## Compact final report
+
+After the settled-result handoff, run `scripts/format-report.ps1 -SnapshotPath <path>`. It emits three compact lines: `observed` for direct browser facts, `independent-verification` for separate HTTP/handoff facts (independent verification), and `inference` for the edit-readiness decision. Use `-OutputPath` only when a local report file is useful. Do not present the inference as a direct observation, and do not repeat healthy resource details in the conversation.
+
 ## Reporting format
 
 Return a compact evidence summary with:
