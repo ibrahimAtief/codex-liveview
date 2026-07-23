@@ -55,6 +55,10 @@ Only publish a screenshot after a visual and structural integrity check confirms
 - Set `CODEX_LIVEVIEW_ROOT` when the LiveView project is installed somewhere other than the local default. The helper never starts the application under test.
 - Start the application under test only with its own documented project command. If the page appears raw or incomplete, first verify that expected startup path; do not immediately blame a stylesheet or rewrite application code.
 
+## Browser capability preflight
+
+Before testing, run `scripts/preflight-browser.ps1` once. It reports the available Chrome/Edge installation, Node and Playwright availability, approved screenshot-root presence, independent HTTP capability, current LiveView health, and the shared-tab status supplied by the browser tool. It is read-only: it does not install browsers, dependencies, extensions, or start LiveView or the application under test. If the shared browser tool is available, use that visible tab; otherwise choose the strongest available fallback and report the limitation once.
+
 ## Automatic evidence publishing
 
 After Codex has prepared and integrity-checked one snapshot JSON file, run `scripts/publish-evidence.ps1 -SnapshotPath <path>`. The helper reuses the readiness check, sends one `POST /api/evidence`, and reports `published=true` or `published=false`. It never starts the application under test and does not retry failed publishes.
